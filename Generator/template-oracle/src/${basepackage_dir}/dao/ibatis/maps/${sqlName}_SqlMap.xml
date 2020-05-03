@@ -1,0 +1,130 @@
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first> 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="${className}">
+
+    <typeAlias alias="${classNameLower}" type="${basepackage}.domain.${className}" />
+
+	<cacheModel id="oneDayCache" type="OSCACHE">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insert${className}" />
+		<flushOnExecute statement="update${className}" />
+		<flushOnExecute statement="delete${className}" />
+	</cacheModel>
+	
+    <resultMap id="${classNameLower}Result" class="${classNameLower}">
+		<#list table.columns as column>
+		<#if column.isDateTimeColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="DATETIME" />
+		<#elseif column.isClobColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="CLOB" />
+		<#elseif column.isNumberColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="DECIMAL" />
+		<#else >
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="VARCHAR" />
+		</#if>
+		</#list>
+    </resultMap>
+
+	<sql id="sf-${classNameLower}">
+		<#list table.columns as column>
+		<#if column.isDateTimeColumn>
+		<isNotEmpty prepend=" and " property="${column.columnNameLower}">a.${column.sqlName} = #${column.columnNameLower}:DATETIME#</isNotEmpty>
+		<#elseif column.isClobColumn>
+		<isNotEmpty prepend=" and " property="${column.columnNameLower}">a.${column.sqlName} = #${column.columnNameLower}:CLOB#</isNotEmpty>
+		<#elseif column.isNumberColumn>
+		<isNotEmpty prepend=" and " property="${column.columnNameLower}">a.${column.sqlName} = #${column.columnNameLower}:DECIMAL#</isNotEmpty>
+		<#else >
+		<isNotEmpty prepend=" and " property="${column.columnNameLower}">a.${column.sqlName} = #${column.columnNameLower}:VARCHAR#</isNotEmpty>
+		</#if>
+		</#list>
+	</sql>
+	
+	<select id="select${className}" resultMap="${classNameLower}Result" parameterClass="${classNameLower}" cacheModel="oneDayCache">
+		select * from ${table.sqlName} a where 1=1
+		<include refid="sf-${classNameLower}" />
+	</select>
+	
+	<select id="select${className}List" resultMap="${classNameLower}Result" parameterClass="${classNameLower}" cacheModel="oneDayCache">
+		<isNotEmpty property="row.count"><![CDATA[ select * from ( ]]></isNotEmpty>
+		select * from ${table.sqlName} a where 1=1
+		<include refid="sf-${classNameLower}" />
+		<!-- order by a.ID desc -->
+		<isNotEmpty property="row.count"><![CDATA[ ) where rownum<=#row.count# ]]></isNotEmpty>
+	</select>
+	
+	<select id="select${className}Count" resultClass="long" parameterClass="${classNameLower}" cacheModel="oneDayCache">
+		select count(*) from ${table.sqlName} a where 1 = 1
+		<include refid="sf-${classNameLower}" />
+	</select>
+	
+	<select id="select${className}PaginatedList" resultMap="${classNameLower}Result" parameterClass="${classNameLower}" cacheModel="oneDayCache">
+		<![CDATA[ select * from ( select t_.*, rownum rn_ from ( ]]>
+		select * from ${table.sqlName} a where 1=1
+		<include refid="sf-${classNameLower}" />
+		<!-- order by a.ID desc -->
+		<![CDATA[ ) t_ where rownum <= (#row.first# + #row.count#)) where rn_ >= (#row.first# + 1) ]]>
+	</select>
+
+	<insert id="insert${className}" parameterClass="${classNameLower}">
+		<selectKey resultClass="long" keyProperty="id">select xxx.nextval as id from dual</selectKey>
+		<![CDATA[insert into ${table.sqlName} (]]>
+		<dynamic prepend=" ">
+			<#list table.columns as column>
+			<isNotNull prepend="," property="${column.columnNameLower}">${column.sqlName}</isNotNull>
+			</#list>
+		</dynamic>
+		<![CDATA[) values (]]>
+		<dynamic prepend=" ">
+			<#list table.columns as column>
+			<#if column.isDateTimeColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">#${column.columnNameLower}:DATETIME#</isNotNull>
+			<#elseif column.isClobColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">#${column.columnNameLower}:CLOB#</isNotNull>
+			<#elseif column.isNumberColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">#${column.columnNameLower}:DECIMAL#</isNotNull>
+			<#else >
+			<isNotNull prepend="," property="${column.columnNameLower}">#${column.columnNameLower}:VARCHAR#</isNotNull>
+			</#if>
+			</#list>
+		</dynamic>
+		<![CDATA[)]]>
+	</insert>
+	
+	<update id="update${className}" parameterClass="${classNameLower}">
+		update ${table.sqlName}
+		<dynamic prepend="set">
+			<#list table.columns as column>
+			<#if column.isDateTimeColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">${column.sqlName} = #${column.columnNameLower}:DATETIME#</isNotNull>
+			<#elseif column.isClobColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">${column.sqlName} = #${column.columnNameLower}:CLOB#</isNotNull>
+			<#elseif column.isNumberColumn>
+			<isNotNull prepend="," property="${column.columnNameLower}">${column.sqlName} = #${column.columnNameLower}:DECIMAL#</isNotNull>
+			<#else >
+			<isNotNull prepend="," property="${column.columnNameLower}">${column.sqlName} = #${column.columnNameLower}:VARCHAR#</isNotNull>
+			</#if>
+			</#list>
+		</dynamic>
+		where
+		<isNotEmpty prepend=" " property="id">ID = #id#</isNotEmpty>
+		<isEmpty prepend=" " property="id">
+			<isNotEmpty prepend=" " property="map.pks">
+				ID in
+				<iterate close=")" open="(" conjunction="," property="map.pks">#map.pks[]#</iterate>
+			</isNotEmpty>
+		</isEmpty>
+	</update>
+
+	<delete id="delete${className}" parameterClass="${classNameLower}">
+		delete from ${table.sqlName} where
+		<isNotEmpty prepend=" " property="id">ID = #id#</isNotEmpty>
+		<isEmpty prepend=" " property="id">
+			<isNotEmpty prepend=" " property="map.pks">
+				ID in
+				<iterate close=")" open="(" conjunction="," property="map.pks">#map.pks[]#</iterate>
+			</isNotEmpty>
+		</isEmpty>
+	</delete>
+</sqlMap>

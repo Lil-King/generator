@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bean.WwabAttachment">
+	
+	<resultMap id="wwabAttachmentResult" type="WwabAttachment">
+		<result property="objectid" column="OBJECTID" jdbcType="DECIMAL" />
+		<result property="sourceid" column="SOURCEID" jdbcType="VARCHAR" />
+		<result property="sourcety" column="SOURCETY" jdbcType="VARCHAR" />
+		<result property="filename" column="FILENAME" jdbcType="VARCHAR" />
+		<result property="filesize" column="FILESIZE" jdbcType="DECIMAL" />
+		<result property="filetype" column="FILETYPE" jdbcType="VARCHAR" />
+		<result property="filepath" column="FILEPATH" jdbcType="VARCHAR" />
+		<result property="lrrdwbm" column="LRRDWBM" jdbcType="VARCHAR" />
+		<result property="lrrdwmc" column="LRRDWMC" jdbcType="VARCHAR" />
+		<result property="lrrid" column="LRRID" jdbcType="VARCHAR" />
+		<result property="lrrxm" column="LRRXM" jdbcType="VARCHAR" />
+		<result property="lrsj" column="LRSJ" jdbcType="VARCHAR" />
+		<result property="gxdwdm" column="GXDWDM" jdbcType="VARCHAR" />
+		<result property="gxdwmc" column="GXDWMC" jdbcType="VARCHAR" />
+		<result property="gxrid" column="GXRID" jdbcType="VARCHAR" />
+		<result property="gxrxm" column="GXRXM" jdbcType="VARCHAR" />
+		<result property="gxsj" column="GXSJ" jdbcType="VARCHAR" />
+		<result property="sczt" column="SCZT" jdbcType="VARCHAR" />
+		<result property="sfsb" column="SFSB" jdbcType="VARCHAR" />
+	</resultMap>
+     
+     
+	<!-- 新增记录  -->
+	<insert id="insertWwabAttachment" parameterType="WwabAttachment" >
+	    <selectKey keyProperty="uuid" order="BEFORE" resultType="STRING">
+		  select sys_guid() as uuid from dual 
+		</selectKey>
+        insert into WWAB_ATTACHMENT 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="objectid!= null">
+                   OBJECTID,
+			</if>
+			<if test="sourceid!= null">
+                   SOURCEID,
+			</if>
+			<if test="sourcety!= null">
+                   SOURCETY,
+			</if>
+			<if test="filename!= null">
+                   FILENAME,
+			</if>
+			<if test="filesize!= null">
+                   FILESIZE,
+			</if>
+			<if test="filetype!= null">
+                   FILETYPE,
+			</if>
+			<if test="filepath!= null">
+                   FILEPATH,
+			</if>
+			<if test="lrrdwbm!= null">
+                   LRRDWBM,
+			</if>
+			<if test="lrrdwmc!= null">
+                   LRRDWMC,
+			</if>
+			<if test="lrrid!= null">
+                   LRRID,
+			</if>
+			<if test="lrrxm!= null">
+                   LRRXM,
+			</if>
+			<if test="lrsj!= null">
+                   LRSJ,
+			</if>
+			<if test="gxdwdm!= null">
+                   GXDWDM,
+			</if>
+			<if test="gxdwmc!= null">
+                   GXDWMC,
+			</if>
+			<if test="gxrid!= null">
+                   GXRID,
+			</if>
+			<if test="gxrxm!= null">
+                   GXRXM,
+			</if>
+			<if test="gxsj!= null">
+                   GXSJ,
+			</if>
+			<if test="sczt!= null">
+                   SCZT,
+			</if>
+			<if test="sfsb!= null">
+                   SFSB,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="objectid!= null">           	
+                   #{objectid,jdbcType=DECIMAL},
+			</if>        
+			<if test="sourceid!= null">           	
+                   #{sourceid,jdbcType=VARCHAR},
+			</if>        
+			<if test="sourcety!= null">           	
+                   #{sourcety,jdbcType=VARCHAR},
+			</if>        
+			<if test="filename!= null">           	
+                   #{filename,jdbcType=VARCHAR},
+			</if>        
+			<if test="filesize!= null">           	
+                   #{filesize,jdbcType=DECIMAL},
+			</if>        
+			<if test="filetype!= null">           	
+                   #{filetype,jdbcType=VARCHAR},
+			</if>        
+			<if test="filepath!= null">           	
+                   #{filepath,jdbcType=VARCHAR},
+			</if>        
+			<if test="lrrdwbm!= null">           	
+                   #{lrrdwbm,jdbcType=VARCHAR},
+			</if>        
+			<if test="lrrdwmc!= null">           	
+                   #{lrrdwmc,jdbcType=VARCHAR},
+			</if>        
+			<if test="lrrid!= null">           	
+                   #{lrrid,jdbcType=VARCHAR},
+			</if>        
+			<if test="lrrxm!= null">           	
+                   #{lrrxm,jdbcType=VARCHAR},
+			</if>        
+			<if test="lrsj!= null">           	
+                   #{lrsj,jdbcType=VARCHAR},
+			</if>        
+			<if test="gxdwdm!= null">           	
+                   #{gxdwdm,jdbcType=VARCHAR},
+			</if>        
+			<if test="gxdwmc!= null">           	
+                   #{gxdwmc,jdbcType=VARCHAR},
+			</if>        
+			<if test="gxrid!= null">           	
+                   #{gxrid,jdbcType=VARCHAR},
+			</if>        
+			<if test="gxrxm!= null">           	
+                   #{gxrxm,jdbcType=VARCHAR},
+			</if>        
+			<if test="gxsj!= null">           	
+                   #{gxsj,jdbcType=VARCHAR},
+			</if>        
+			<if test="sczt!= null">           	
+                   #{sczt,jdbcType=VARCHAR},
+			</if>        
+			<if test="sfsb!= null">           	
+                   #{sfsb,jdbcType=VARCHAR},
+			</if>        
+		</trim>	   	
+	</insert>
+     
+     
+	<!-- 删除记录 -->
+	<delete id="deleteWwabAttachment" parameterType="WwabAttachment">
+        delete from WWAB_ATTACHMENT where 1=1      
+		<if test="uuid!=null">
+           and  uuid=#{uuid}
+		</if>
+		<if test="map.pks!=null">
+           and uuid in
+			<foreach collection="map.ids" item="uuid" open="(" separator="," close=")">
+             #{uuid}
+			</foreach>
+		</if>
+	</delete>
+     
+     
+	<!-- 修改记录 -->
+	<update id="updateWwabAttachment" parameterType="WwabAttachment">
+        update WWAB_ATTACHMENT
+		<set>
+			<if test="objectid!= null">
+                 OBJECTID = #{objectid,jdbcType=DECIMAL},
+			</if>			
+			<if test="sourceid!= null">
+                 SOURCEID = #{sourceid,jdbcType=VARCHAR},
+			</if>			
+			<if test="sourcety!= null">
+                 SOURCETY = #{sourcety,jdbcType=VARCHAR},
+			</if>			
+			<if test="filename!= null">
+                 FILENAME = #{filename,jdbcType=VARCHAR},
+			</if>			
+			<if test="filesize!= null">
+                 FILESIZE = #{filesize,jdbcType=DECIMAL},
+			</if>			
+			<if test="filetype!= null">
+                 FILETYPE = #{filetype,jdbcType=VARCHAR},
+			</if>			
+			<if test="filepath!= null">
+                 FILEPATH = #{filepath,jdbcType=VARCHAR},
+			</if>			
+			<if test="lrrdwbm!= null">
+                 LRRDWBM = #{lrrdwbm,jdbcType=VARCHAR},
+			</if>			
+			<if test="lrrdwmc!= null">
+                 LRRDWMC = #{lrrdwmc,jdbcType=VARCHAR},
+			</if>			
+			<if test="lrrid!= null">
+                 LRRID = #{lrrid,jdbcType=VARCHAR},
+			</if>			
+			<if test="lrrxm!= null">
+                 LRRXM = #{lrrxm,jdbcType=VARCHAR},
+			</if>			
+			<if test="lrsj!= null">
+                 LRSJ = #{lrsj,jdbcType=VARCHAR},
+			</if>			
+			<if test="gxdwdm!= null">
+                 GXDWDM = #{gxdwdm,jdbcType=VARCHAR},
+			</if>			
+			<if test="gxdwmc!= null">
+                 GXDWMC = #{gxdwmc,jdbcType=VARCHAR},
+			</if>			
+			<if test="gxrid!= null">
+                 GXRID = #{gxrid,jdbcType=VARCHAR},
+			</if>			
+			<if test="gxrxm!= null">
+                 GXRXM = #{gxrxm,jdbcType=VARCHAR},
+			</if>			
+			<if test="gxsj!= null">
+                 GXSJ = #{gxsj,jdbcType=VARCHAR},
+			</if>			
+			<if test="sczt!= null">
+                 SCZT = #{sczt,jdbcType=VARCHAR},
+			</if>			
+			<if test="sfsb!= null">
+                 SFSB = #{sfsb,jdbcType=VARCHAR},
+			</if>			
+		</set>
+               where 1=1
+		    <if test="uuid!=null">
+                 and  uuid=#{uuid}
+		    </if>
+	</update>
+    
+    <!-- 逻辑删除记录 -->
+	<update id="updateWwabAttachmentDel" parameterType="WwabAttachment">
+		update WWAB_ATTACHMENT
+		<set>
+        	<if test="isdel!= null">
+                 ISDEL = #{isdel,jdbcType=VARCHAR},
+			</if>
+		</set>
+				where 1=1
+			<if test="uuid!=null">
+            	and uuid = #{uuid}
+		    </if>
+		    <if test="map.ids!=null">
+                and id in
+			    <foreach collection="map.ids" item="uuid" open="(" separator="," close=")">
+	                #{uuid}
+			    </foreach>
+		    </if>
+	</update>
+     
+	<!-- 基础信息查询  -->
+	<select id="selectWwabAttachment" parameterType="WwabAttachment" resultType="WwabAttachment">
+           select * from WWAB_ATTACHMENT where 1=1 and uuid=#{uuid}                  
+	</select>
+      
+      
+	<!-- 基础列表查询 -->  
+	<select id="selectWwabAttachmentList" parameterType="WwabAttachment" resultType="WwabAttachment" >
+         select * from WWAB_ATTACHMENT where 1=1
+	</select> 
+     
+     
+	<!-- 分页查询列表 -->
+	<select id="selectWwabAttachmentPage" parameterType="WwabAttachment" resultType="WwabAttachment">
+	   SELECT * FROM
+	   (
+		   SELECT A.*, ROWNUM RN
+		   FROM (
+		   	SELECT * FROM WWAB_ATTACHMENT where isdel = '0'
+		   		<!-- 姓名 -->
+			   	<if test="xm != null and xm != ''">
+                	and xm like '%' || #{xm} || '%'
+				</if>
+				<!-- 证件号码 -->
+				<if test="zjhm != null and zjhm != ''">
+                	and zjhm = #{zjhm} 
+				</if>
+		   ) A
+		   WHERE ROWNUM  <![CDATA[ 	<= ]]>#{map.endIndex}
+	   )
+	   WHERE RN <![CDATA[ > ]]>#{map.startIndex}
+	</select>
+     
+     
+	<!-- 查询总条数 -->
+	<select id="selectWwabAttachmentCount" parameterType="WwabAttachment" resultType="Integer">
+     	select count(1) from WWAB_ATTACHMENT where isdel = '0'
+     	<!-- 姓名 -->
+	   	<if test="xm != null and xm != ''">
+              	and xm like '%' || #{xm} || '%'
+		</if>
+		<!-- 证件号码 -->
+		<if test="zjhm != null and zjhm != ''">
+              	and zjhm = #{zjhm} 
+		</if>
+	</select>
+     
+     	     
+</mapper>	

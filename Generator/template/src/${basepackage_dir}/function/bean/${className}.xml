@@ -1,0 +1,163 @@
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first>
+<#assign flg = "#{">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bean.${className}">
+	
+	<resultMap id="${classNameLower}Result" type="${className}">
+	 	<#list table.columns as column>
+		<#if column.isDateTimeColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="TIMESTAMP" />
+		<#elseif column.isClobColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="CLOB" />
+		<#elseif column.isNumberColumn>
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="DECIMAL" />
+		<#else >
+		<result property="${column.columnNameLower}" column="${column.sqlName}" jdbcType="VARCHAR" />
+	    </#if>
+		</#list>	 	
+	</resultMap>
+     
+     
+	<!-- 新增记录  -->
+	<insert id="insert${className}" parameterType="${className}" >
+	    <selectKey keyProperty="uuid" order="BEFORE" resultType="STRING">
+		  select sys_guid() as uuid from dual 
+		</selectKey>
+        insert into ${table.sqlName} 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+           <#list table.columns as column>
+			<if test="${column.columnNameLower}!= null">
+                   ${column.sqlName},
+			</if>
+		   </#list>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+          <#list table.columns as column>
+			<if test="${column.columnNameLower}!= null">           	
+			  	<#if column.isDateTimeColumn>
+                   ${flg}${column.columnNameLower},jdbcType=TIMESTAMP},
+                <#elseif column.isClobColumn>
+                   ${flg}${column.columnNameLower},jdbcType=CLOB},
+                <#elseif column.isNumberColumn>
+                   ${flg}${column.columnNameLower},jdbcType=DECIMAL},
+                <#else >
+                   ${flg}${column.columnNameLower},jdbcType=VARCHAR},
+                </#if>              
+			</if>        
+          </#list>
+		</trim>	   	
+	</insert>
+     
+     
+	<!-- 删除记录 -->
+	<delete id="delete${className}" parameterType="${className}">
+        delete from ${table.sqlName} where 1=1      
+		<if test="uuid!=null">
+           and  uuid=${flg}uuid}
+		</if>
+		<if test="map.pks!=null">
+           and uuid in
+			<foreach collection="map.ids" item="uuid" open="(" separator="," close=")">
+             ${flg}uuid}
+			</foreach>
+		</if>
+	</delete>
+     
+     
+	<!-- 修改记录 -->
+	<update id="update${className}" parameterType="${className}">
+        update ${table.sqlName}
+		<set>
+        	<#list table.columns as column>		
+			<if test="${column.columnNameLower}!= null">
+			  	<#if column.isDateTimeColumn>
+                 ${column.sqlName} = ${flg}${column.columnNameLower},jdbcType=TIMESTAMP},
+                <#elseif column.isClobColumn>
+                 ${column.sqlName} = ${flg}${column.columnNameLower},jdbcType=CLOB},
+                <#elseif column.isNumberColumn>
+                 ${column.sqlName} = ${flg}${column.columnNameLower},jdbcType=DECIMAL},
+                <#else >
+                 ${column.sqlName} = ${flg}${column.columnNameLower},jdbcType=VARCHAR},
+                </#if>
+			</if>			
+        	</#list>
+		</set>
+               where 1=1
+		    <if test="uuid!=null">
+                 and  uuid=${flg}uuid}
+		    </if>
+	</update>
+    
+    <!-- 逻辑删除记录 -->
+	<update id="update${className}Del" parameterType="${className}">
+		update ${table.sqlName}
+		<set>
+        	<if test="isdel!= null">
+                 ISDEL = ${flg}isdel,jdbcType=VARCHAR},
+			</if>
+		</set>
+				where 1=1
+			<if test="uuid!=null">
+            	and uuid = ${flg}uuid}
+		    </if>
+		    <if test="map.ids!=null">
+                and id in
+			    <foreach collection="map.ids" item="uuid" open="(" separator="," close=")">
+	                ${flg}uuid}
+			    </foreach>
+		    </if>
+	</update>
+     
+	<!-- 基础信息查询  -->
+	<select id="select${className}" parameterType="${className}" resultType="${className}">
+           select * from ${table.sqlName} where 1=1 and uuid=${flg}uuid}                  
+	</select>
+      
+      
+	<!-- 基础列表查询 -->  
+	<select id="select${className}List" parameterType="${className}" resultType="${className}" >
+         select * from ${table.sqlName} where 1=1
+	</select> 
+     
+     
+	<!-- 分页查询列表 -->
+	<select id="select${className}Page" parameterType="${className}" resultType="${className}">
+	   SELECT * FROM
+	   (
+		   SELECT A.*, ROWNUM RN
+		   FROM (
+		   	SELECT * FROM ${table.sqlName} where isdel = '0'
+		   		<!-- 姓名 -->
+			   	<if test="xm != null and xm != ''">
+                	and xm like '%' || ${flg}xm} || '%'
+				</if>
+				<!-- 证件号码 -->
+				<if test="zjhm != null and zjhm != ''">
+                	and zjhm = ${flg}zjhm} 
+				</if>
+		   ) A
+		   WHERE ROWNUM  <![CDATA[ 	<= ]]>${flg}map.endIndex}
+	   )
+	   WHERE RN <![CDATA[ > ]]>${flg}map.startIndex}
+	</select>
+     
+     
+	<!-- 查询总条数 -->
+	<select id="select${className}Count" parameterType="${className}" resultType="Integer">
+     	select count(1) from ${table.sqlName} where isdel = '0'
+     	<!-- 姓名 -->
+	   	<if test="xm != null and xm != ''">
+              	and xm like '%' || ${flg}xm} || '%'
+		</if>
+		<!-- 证件号码 -->
+		<if test="zjhm != null and zjhm != ''">
+              	and zjhm = ${flg}zjhm} 
+		</if>
+	</select>
+     
+     	     
+</mapper>	

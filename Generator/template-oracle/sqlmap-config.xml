@@ -1,0 +1,2 @@
+	<sqlMap resource="com/ebiz/mmt/dao/ibatis/maps/${table.sqlName}_SqlMap.xml" />
+generator-insert-location
